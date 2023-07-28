@@ -1,0 +1,1 @@
+$('#button-5').click(function(){ window.location = 'https://transacto.lt/login'});

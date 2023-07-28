@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Transactions - Transacto{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="../static/styles/transactions.css">
+<div class="container-fluid mb-5" color="#002966">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title text-center">Recent Transactions</h5>
+                    <div class="table-responsive">
+                        <table id="transactions_table" class="table table-striped .w-auto">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Sender</th>
+                                    <th>Recipient</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions_table_body">
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Sender</th>
+                                    <th>Recipient</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                </tr>
+                                
+                            </tfoot>
+                            
+                        </table>
+                        <div class="d-grid">
+                            <button class="btn btn-warning btn-lg" type="button" onclick="loadMoreData()">Load more</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/transactions.js"></script>
+{% endblock %}

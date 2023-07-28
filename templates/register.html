@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Register - Transacto{% endblock %}
+{% block main %}
+<!-- Email consent modal -->
+<div class="modal modal-lg fade" id="email_consent_modal" tabindex="-1" aria-labelledby="email_consent_modal_label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="email_consent_modal_label">Email consent</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container">
+                <p>
+                    Transacto is a website that allows users to easily conduct online transactions. As part of our commitment to security, we require users to verify their email address and have the ability to change their email and password. <br>
+
+                    <h3>Email Verification:</h3>
+                    Upon registration, Transacto will send an email to the email address provided during the registration process. This email will contain a verification link that the user must click on to verify their email address. This is a one-time email and will only be sent once. The purpose of this email is to ensure that the user's email address is valid and to prevent fraudulent or unauthorized access to user accounts. <br>
+
+                    <h3>Change Email/Password:</h3>
+                    Users may change their email address or password at any time by accessing their account settings on the Transacto website. When a user initiates a change to their email address or password, Transacto will send an email to the user's registered email address to confirm the change. The email will contain a link to confirm the change. If the user did not initiate the change or does not want to make the change, they can simply ignore the email and their email and password will remain unchanged. <br> <p></p> <br>
+
+                    It is important for users to keep their email and password up to date to ensure the security of their Transacto account. If you have any questions or concerns about the email verification or change email/password process, please contact our support team for assistance.
+                </p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- Email consent modal -->
+<div class="container-fluid" color="#002966">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="container px-5 my-5">
+                    <form action="{{ url_for('main.register') }}", method="post">
+                        <div class="msg">{{ msg }}</div>
+                        <div class="mb-3">
+                            <label class="form-label" for="username">Username</label>
+                            <input class="form-control" id="username" type="text" name="username" placeholder="Username" required/>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="name">Name</label>
+                                <input class="form-control" id="name" type="text" name="name" placeholder="Name" required/>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="surname">Surname</label>
+                                <input class="form-control" id="surname" type="text" name="surname" placeholder="Surname" required/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" id="email" type="email" name="email" placeholder="Email" required/>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label class="form-label" for="password">Password</label>
+                                <input class="form-control" id="password" type="password" name="password" placeholder="Password" required/>
+                                <div id="popover-password">
+                                    <p><span id="result"></span></p>
+                                    <div class="progress">
+                                        <div id="password-strength" 
+                                            class="progress-bar" 
+                                            role="progressbar" 
+                                            aria-valuenow="40" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100" 
+                                            style="width:0%">
+                                        </div>
+                                    </div>
+                                    <style>.progress-bar-danger {background-color: #e90f10;}.progress-bar-warning{background-color: #ffad00;}.progress-bar-success{background-color: #02b502;}</style>
+                                    <ul class="list-unstyled">
+                                        <li class="">
+                                            <span class="low-upper-case">
+                                                <i class="fas fa-circle" aria-hidden="true"></i>
+                                                &nbsp;Lowercase &amp; Uppercase
+                                            </span>
+                                        </li>
+                                        <li class="">
+                                            <span class="one-number">
+                                                <i class="fas fa-circle" aria-hidden="true"></i>
+                                                &nbsp;Number (0-9)
+                                            </span> 
+                                        </li>
+                                        <li class="">
+                                            <span class="one-special-char">
+                                                <i class="fas fa-circle" aria-hidden="true"></i>
+                                                &nbsp;Special Character (!@#$%^&*)
+                                            </span>
+                                        </li>
+                                        <li class="">
+                                            <span class="eight-character">
+                                                <i class="fas fa-circle" aria-hidden="true"></i>
+                                                &nbsp;Atleast 8 Characters
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <label class="form-label" for="repeat_password">Repeat password</label>
+                                <input class="form-control" id="repeat_password" name="repeat_password" type="password" placeholder="Repeat password" data-sb-validations="required" />
+                                <div class="invalid-feedback" data-sb-feedback="password:required">Password is required.</div>
+                            </div>
+                        </div>
+                        <p>By registering you agree to receive emails from Transacto. Read information about the emails that will be sent <a href="" data-bs-toggle="modal" data-bs-target="#email_consent_modal">here.</a></label>
+                        <div class="d-grid">
+                            {{ recaptcha }}
+                            <button class="btn btn-warning btn-lg" onclick="" id="submitButton" data-bs-toggle="modal" data-bs-target="#send_modal" type="submit">Register</button>
+                            <span>Already have an account?</span><a href="{{ url_for('main.login') }}">Login here.</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/register.js"></script>
+{% endblock %}

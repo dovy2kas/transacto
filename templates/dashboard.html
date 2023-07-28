@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Transacto{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="../static/styles/dashboard.css">
+<script>
+var message = '{{ msg }}';
+</script>
+<!-- Payment confirmation modal -->
+<div class="modal fade" id="send_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content" style="background: #3e3e42">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm payment</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="container my-5">
+                <div class="mb-3">
+                    <label class="form-label" for="confirm_send_recipient">Recipient (User ID)</label>
+                    <input class="form-control" id="confirm_send_recipient" type="text" placeholder="Recipient (User ID)" disabled/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="send_amount_input">Amount</label>
+                    <div class="input-group" id="send_amount_input">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">€</div>
+                        </div>
+                        <input class="form-control" id="confirm_send_amount" type="text" placeholder="Amount" disabled/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="confirm_send_description">Payment description</label>
+                    <input class="form-control" id="confirm_send_description" type="text" placeholder="What is the payment for?" disabled/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="confirm_send_totp">Two factor code</label>
+                    <input class="form-control" id="confirm_send_totp" type="text" placeholder="Two factor authentication code."/>
+                </div>
+                <div class="d-grid">
+                    <button class="btn-lg button_animation" id="confirm_payment" type="button">Confirm payment</button> <br>
+                    <button class="btn btn-primary btn-lg" id="submitButton" data-bs-toggle="modal" data-bs-dismiss="#send_modal" type="button">Edit payment</button>
+                </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+    </div>
+</div>
+</div>
+<!-- Payment confirmation modal -->
+<div class="container-fluid mb-5" color="#EDF2F4">
+    <div class="row">
+        <div class="col-md-2" id="notification_container">
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                <h4 class="card-title text-center">Welcome, {{ name }} ({{ user_id }})</h4>
+                <h5 class="card-title text-center">Balance</h5>
+                <p class="card-text text-center h1" id="balance_wrapper"></p>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="container px-5 my-5">
+                        <div class="mb-3">
+                            <div class="form-outline">
+                                <label class="form-label" for="send_recipient">Recipient (User ID)</label>
+                                <input class="form-control" id="send_recipient" type="text" placeholder="Recipient (User ID)"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="send_amount_input">Amount</label>
+                            <div class="input-group" id="send_amount_input">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">€</div>
+                                </div>
+                                <input class="form-control" id="send_amount" type="text" placeholder="Amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0').replace(/^(\d+\.\d{2}).*/, '$1');" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="send_description">Payment description</label>
+                            <input class="form-control" id="send_description" type="text" placeholder="What is the payment for?" maxlength="50"/>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-warning btn-lg" onclick="payment_confirmation_menu()" id="submitButton" data-bs-toggle="modal" data-bs-target="#send_modal" type="button">Send payment</button>
+                        </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title text-center">Recent Transactions</h5>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Description</th>
+                                    <th scope="col">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction_table_body">
+                            </tbody>
+                        </table>
+                        <a href="{{ url_for('transactions.index') }}">View more</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/dashboard.js"></script>
+{% endblock %}

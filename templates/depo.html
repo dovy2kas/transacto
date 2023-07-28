@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block title %}Deposit/withdraw -{% endblock %}
+{% block main %}
+<link rel="stylesheet" href="../static/styles/depo.css">
+<!-- Paypal deposit confirmation modal -->
+<div class="modal fade" id="paypal_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: #2F2F2F">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm payment</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container my-5">
+                    <div class="mb-3">
+                        <label class="form-label" for="paypal_amount">Amount</label>
+                        <div class="input-group" id="paypal_amount">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">€</div>
+                            </div>
+                            <input class="form-control" id="confirm_paypal_amount" type="text" placeholder="Amount" data-sb-validations="required" disabled/>
+                            <div class="invalid-feedback" data-sb-feedback="confirm_paypal_amount:required">Amount is required.</div>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <div id="paypal-button"></div>
+
+                        <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+                                    
+                                    <script>
+                                        var CREATE_PAYMENT_URL  = 'https://transacto.lt/paypal_payment';
+                                        var EXECUTE_PAYMENT_URL = 'http://transacto.lt/paypal_execute';
+
+                                        paypal.Button.render({
+
+                                            style: {
+                                                color: 'blue',
+                                                shape: 'rect',
+                                                label: 'paypal',
+                                                size: 'responsive'
+                                            },
+                                    
+                                            env: 'sandbox', // Or 'sandbox'
+                                    
+                                            commit: true, // Show a 'Pay Now' button
+                                    
+                                            payment: function() {
+                                                $('#paypal_modal').modal('hide');
+                                                socket.emit('paypal_payment', data1=(document.getElementById('depo_amount').value));
+                                                function get_response() {
+                                                    return new Promise(resolve => {
+                                                        socket.on('paypal_payment_response', data=> {
+                                                            resolve(data)
+                                                        });
+                                                    });
+
+                                                }
+                                                
+                                                async function fetchData() {
+                                                    var data = await get_response();
+                                                    return data;
+                                                }
+                                                
+                                                return fetchData().then(data => {
+                                                    return data;
+                                                })
+                                            },
+                                    
+                                            onAuthorize: function(data) {
+                                                socket.emit('paypal_execute', data1=(data.paymentID), data2=(data.payerID), data3=(document.getElementById('depo_amount').value));
+
+                                                function get_response() {
+                                                    return new Promise(resolve => {
+                                                        socket.on('paypal_execute_response', function(res) {
+                                                            resolve(res);
+                                                        });
+                                                    })
+                                                }
+
+                                                async function fetchData() {
+                                                    var data = await get_response();
+                                                    return data
+                                                }
+
+                                                return fetchData().then(data => {
+                                                    return data;
+                                                })
+                                            }
+                                    
+                                        }, '#paypal-button');
+                                    </script> <br>
+                        <button class="btn btn-primary btn-lg" id="submitButton" data-bs-dismiss="modal" type="button">Edit deposit</button>
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!-- Paypal deposit confirmation modal -->
+<!-- Paypsera deposit confirmation modal -->
+<div class="modal fade" id="paysera_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: #2F2F2F">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm payment</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container my-5">
+                    <div class="mb-3">
+                        <label class="form-label" for="paysera_amount">Amount</label>
+                        <div class="input-group" id="paysera_amount">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">€</div>
+                            </div>
+                            <input class="form-control" id="confirm_paysera_amount" type="text" placeholder="Amount" data-sb-validations="required" disabled/>
+                            <div class="invalid-feedback" data-sb-feedback="confirm_paysera_amount:required">Amount is required.</div>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <div id="paysera-button"></div>
+                        <button class="btn btn-warning btn-lg mb-2" type="button" onclick="paysera_deposit()">Deposit</button>
+                        <button class="btn btn-primary btn-lg" id="submitButton" data-bs-dismiss="modal" type="button">Edit deposit</button>
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!-- Paysera deposit confirmation modal -->
+<!-- Paypal withdrawal confirmation modal -->
+<div class="modal fade" id="paypal_withdrawal_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: #2F2F2F">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Confirm withdrawal</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container my-5">
+                    <div class="mb-3">
+                        <label class="form-label" for="paypal_withdrawal_amount">Amount</label>
+                        <div class="input-group" id="paypal_withdrawal_amount">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">€</div>
+                            </div>
+                            <input class="form-control" id="confirm_paypal_withdrawal_amount" type="text" placeholder="Amount" data-sb-validations="required" disabled/>
+                            <div class="invalid-feedback" data-sb-feedback="confirm_paypal_withdrawal_amount:required">Amount is required.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="withdraw_email_input">Email</label>
+                        <div class="input-group" id="withdraw_email_input">
+                            <input class="form-control" id="withdraw_email" type="email" placeholder="Email" data-sb-validations="required" />
+                            <div class="invalid-feedback" data-sb-feedback="withdraw_email:required">Email is required.</div>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-warning btn-lg mb-2" type="button" onclick="paypal_withdrawal()">Withdraw</button>
+                        <button class="btn btn-primary btn-lg" id="submitButton" data-bs-dismiss="modal" type="button">Edit withdraw</button>
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+    </div>
+<!-- Paypal withdrawal confirmation modal -->
+<div class="container-fluid mb-5" color="#002966">
+    <div class="row justify-content-between">
+        <div class="col-md-2" id="notification_container">
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist" style="margin-bottom: 2em;">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="depo-tab" data-bs-toggle="tab" data-bs-target="#depo-tab-pane" type="button" role="tab" aria-controls="depo-tab-pane" aria-selected="true">Deposit</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="withdraw-tab" data-bs-toggle="tab" data-bs-target="#withdraw-tab-pane" type="button" role="tab" aria-controls="withdraw-tab-pane" aria-selected="false">Withdraw</button>
+                        </li>
+                      </ul>
+                      <div class="tab-content" id="myTabContent">
+                        <div class="tab-pane fade show active" id="depo-tab-pane" role="tabpanel" aria-labelledby="depo-tab" tabindex="0">
+                                <div class="mb-3">
+                                    <div class="input-group" id="depo_amount_input">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">€</div>
+                                        </div>
+                                        <input class="form-control" id="depo_amount" type="text" placeholder="Amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0').replace(/^(\d+\.\d{2}).*/, '$1');" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row justify-content-center" id="payment_options">
+                                    <label id="paypal_card" class="justify-content-center text-center col-md-5 mb-1">
+                                        <input type="radio" id="paypal" name="deposit_option" value="paypal">
+                                        <img src="../static/img/paypal_logo.png" alt="Paypal" width="100" height="100"> <br>
+                                        <span>PAYPAL</span>
+                                    </label>
+                                      
+                                    <label id="paysera_card" class="justify-content-center text-center col-md-5 mb-1">
+                                        <input type="radio" id="paysera" name="deposit_option" value="paysera">
+                                        <img src="../static/img/paysera_logo.png" alt="Paysera" width="100" height="100"> <br>
+                                        <span>PAYSERA</span>
+                                    </label>
+                                </div>
+                                <div class="d-grid">                                    
+                                    <button class="btn btn-warning btn-lg" onclick="deposit_proceed()" id="submitButton" type="button">Deposit</button>
+                                </div>
+                        </div>
+                        <div class="tab-pane fade" id="withdraw-tab-pane" role="tabpanel" aria-labelledby="withdraw-tab" tabindex="0">
+                                <div class="mb-3">
+                                    <div class="input-group" id="withdraw_amount_input">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">€</div>
+                                        </div>
+                                        <input class="form-control" id="withdraw_amount" type="text" placeholder="Amount" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1').replace(/^0[^.]/, '0').replace(/^(\d+\.\d{2}).*/, '$1');" />
+                                    </div>
+                                </div>
+                                <div class="mb-3 row justify-content-center" id="payment_options">
+                                    <label id="paypal_withdraw_card" class="justify-content-center text-center col-md-5 mb-1">
+                                        <input type="radio" id="paypal" name="paypal" value="small">
+                                        <img src="../static/img/paypal_logo.png" alt="Paypal" width="100" height="100"> <br>
+                                        <span>PAYPAL</span>
+                                    </label>
+                                    <label id="bank_withdraw_card" class="justify-content-center text-center col-md-5 mb-1">
+                                        <input type="radio" id="bank" name="bank" value="big">
+                                        <span class="fa-solid fa-building-columns fa-4x" style="vertical-align: middle; margin-bottom: 1.5vh;"></span> <br>
+                                        <span>BANK TRANSFER</span>
+                                    </label>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-warning btn-lg" id="submitButton" type="button" onclick="withdrawal_proceed()">Withdraw</button>
+                                </div>
+                        </div>
+                      </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-2 d-none d-sm-block"></div>
+    </div>
+</div>
+<script src="../static/js/depo.js"></script>
+{% endblock %}

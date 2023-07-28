@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Profile - Transacto{% endblock %}
+{% block main %}
+<!-- Two factor auth modal -->
+<div class="modal fade" id="totp_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="background-color: #3e3e42">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Enable 2FA</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="container my-5">
+                    <div class="mb-3" id="qr-container">
+                        
+                    </div>
+                    <div class="mb-3">
+                        <p>Download the 'Google authenticator' app on Google Play store on Android or 'App Store' for iPhones, then scan this QR code. After that type in the code the authenticator gives you here.</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="totp_code">Two factor code</label>
+                        <input class="form-control" id="totp_code" type="text" placeholder="Two factor authentication code." data-sb-validations="required"/>
+                        <div class="invalid-feedback" data-sb-feedback="totp_code:required">Two factor authentication code is required.</div>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-lg btn-warning" id="confirm_2fa" type="button" onclick="confirm_2fa()" data-bs-dismiss="modal">Confirm 2FA</button> <br>
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </div>
+    </div>
+</div>
+<!-- Two factor auth modal -->
+<div class="container-fluid mb-5" color="#002966">
+    <div class="row">
+        <div class="col-md-2" id="notification_container">
+        </div>
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                <h5 class="card-title text-center">Welcome, {{ name }}!</h5>
+                <h6 class="card-title text-center">User ID: {{ userid }}</h6>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-body justify-content-center">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="mb-3 col text-center">
+                            <img id="profileImage" class="mb-2" src="{{ url_for('static', filename='pfp/' + session['username']) + '.jpg'}}" alt="Profile photo" style="border-radius: 50%; width: 100px !important; height: 100px !important;">
+                            <form method="POST" action="{{ url_for('profile.upload_pfp') }}" enctype="multipart/form-data">
+                                <input id="imageUpload" class="form-control mb-2" type="file" name="file">
+                                <input type="submit" class="form-control btn-warning" value="Upload">
+                            </form>
+                        </div>
+                        <div class="mb-3 col">
+                            <label class="form-label" for="change_email">Email</label>
+                            <input class="form-control" id="change_email" type="text" placeholder="New email" value='{{ email }}' disabled/>
+                            <button class="btn btn-warning mt-2" id="change_email_button" onclick="activate_email_change()">Change email</button>
+                        </div>
+                        <div class="mb-3 col">
+                            <label class="form-label" for="current_password">Current password</label>
+                            <input class="form-control" id="current_password" type="password" placeholder="Current password" />
+                            <label class="form-label" for="new_password">Password</label>
+                            <input class="form-control" id="new_password" type="password" name="password" placeholder="New password" required/>
+                            <div id="popover-password">
+                                <p><span id="result"></span></p>
+                                <div class="progress">
+                                    <div id="password-strength" 
+                                        class="progress-bar" 
+                                        role="progressbar" 
+                                        aria-valuenow="40" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100" 
+                                        style="width:0%">
+                                    </div>
+                                </div>
+                                <style>.progress-bar-danger {background-color: #e90f10;}.progress-bar-warning{background-color: #ffad00;}.progress-bar-success{background-color: #02b502;}</style>
+                                <ul class="list-unstyled">
+                                    <li class="">
+                                        <span class="low-upper-case">
+                                            <i class="fas fa-circle" aria-hidden="true"></i>
+                                            &nbsp;Lowercase &amp; Uppercase
+                                        </span>
+                                    </li>
+                                    <li class="">
+                                        <span class="one-number">
+                                            <i class="fas fa-circle" aria-hidden="true"></i>
+                                            &nbsp;Number (0-9)
+                                        </span> 
+                                    </li>
+                                    <li class="">
+                                        <span class="one-special-char">
+                                            <i class="fas fa-circle" aria-hidden="true"></i>
+                                            &nbsp;Special Character (!@#$%^&*)
+                                        </span>
+                                    </li>
+                                    <li class="">
+                                        <span class="eight-character">
+                                            <i class="fas fa-circle" aria-hidden="true"></i>
+                                            &nbsp;Atleast 8 Characters
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <label class="form-label" for="repeat_password">Repeat password</label>
+                            <input class="form-control" id="repeat_password" type="password" placeholder="Repeat password" />
+                            <button class="btn btn-warning mt-2" onclick="change_password()">Change password</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button class="btn btn-warning btn-lg" id="2fa_button" id="submitButton" data-bs-toggle="modal" data-bs-target="#totp_modal" type="button">Enable 2FA</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../static/js/profile.js"></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+.amount {
+    font-weight: bold;
+    color: red !important;
+}
+
+.sent_money {
+    color: #FF0000 !important;
+    font-weight: bold;
+}
+
+.received_money {
+    color: #50C878 !important;
+    font-weight: bold;
+}
+
+#transactions_table_body > tr > td {
+    color: #EDF2F4;
+}
